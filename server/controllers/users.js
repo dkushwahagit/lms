@@ -1,4 +1,5 @@
 var connection = require('../connection');
+var util = require('util');
 var users = {
 getAll: function(req, res) {
 	connection.acquire(function(err,con){
@@ -9,21 +10,19 @@ getAll: function(req, res) {
 		});
 },
 getOne: function(req, res) {
-	req.checkParams("id", "Enter a valid user Id.").notEmpty().isInt();
-	// check for valid input
-	// var errors = req.validationErrors();
-	//   if (errors) {
-	//     res.send(errors, 400);
-	//     return;
-	//   }
+req.assert('id', 'Invalid User Id').isInt();
 
-	connection.acquire(function(err,con){
-		 con.query("Select * from users where username", function(err, result){
+var errors = req.validationErrors();
+  if (errors) {
+    res.send('There have been validation errors: ' + util.inspect(errors), 400);
+    return;
+  }
+connection.acquire(function(err,con){
+		 con.query("Select * from users where id='"+req.params.id+"'", function(err, result){
 			con.release();
 			res.json(result);			
 			});
 		});
-	res.json(user);
 },
 create: function(req, res) {
 	var newuser = req.body;
