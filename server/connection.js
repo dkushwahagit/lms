@@ -7,8 +7,8 @@ this.pool=null;
 			connectionLimit:100,
 			host:'127.0.0.1',
 			user:'root',
-			password:'1',
-			database:'lms_db'
+			password:'',
+			database:'syftp_rms'
 		});
 	};
 
@@ -17,6 +17,5 @@ this.pool=null;
 			callback(err,connection);
 		});
 	};
-	
 }
 module.exports = new Connection();

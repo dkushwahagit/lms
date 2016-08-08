@@ -27,20 +27,17 @@ var auth ={
 		    }
 
 		    if (dbUserObj) {
-		    	console.log('into generate');
-	 
-		      // If authentication is success, we will generate a token
-		      // and dispatch it to the client
-		 
-		      res.json(genToken(dbUserObj));
+		    	//console.log('into generate');
+	 	      	// If authentication is success, we will generate a token
+		      	// and dispatch it to the client
+		        res.json(genToken(dbUserObj));
 		  }
 	    });
-
 	},
 		validate: function(username, password, callback) {
 		var data;
 		connection.acquire(function(err,con){
-		 data=con.query("select concat(first_name,' ',last_name) as name, 'admin' as role, username from users where username='"+username+"' and password='"+password+"'", function(err, result){
+		 data=con.query("select concat(first_name,' ',last_name) as name, 'admin' as role, username, id, password, active, uid from users where username='"+username+"' and password='"+password+"'", function(err, result){
 			con.release();
 			if(err){
 				return;
@@ -63,7 +60,7 @@ var auth ={
 	 
 	  validateUser: function(username, callback) {
 	    connection.acquire(function(err,con){
-		 data=con.query("select concat(first_name,' ',last_name) as name, 'admin' as role, username from users where username='"+username+"'", function(err, result){
+		 data=con.query("select concat(first_name,' ',last_name) as name, 'admin' as role, username, id, password, active, uid from users where username='"+username+"'", function(err, result){
 			con.release();
 			if(err){
 				return;
@@ -75,6 +72,14 @@ var auth ={
 		 });
 		});
 	  },
+	  getUsername:function(req, res) {
+		connection.acquire(function(err,con){
+		con.query("Select * from users where username ='"+req.params.id+"' limit 1", function(err, result){
+			con.release();
+			res.json(result);			
+			});
+		});
+		},
 	  test: function(req,res){
 	  	res.status(200);
 	  	res.json({
@@ -93,6 +98,7 @@ var auth ={
 	  }, require('../config/secret')());
 	 
 	  return {
+		status:200,  
 	    token: token,
 	    expires: expires,
 	    user: user
@@ -104,5 +110,4 @@ var auth ={
 	  return dateObj.setDate(dateObj.getDate() + numDays);
 	}
 
- 
 module.exports = auth;
