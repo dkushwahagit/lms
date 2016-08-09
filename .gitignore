@@ -1,0 +1,7 @@
+server/node_modules
+.vs
+*.dat
+lms.njsproj
+typings
+bin
+obj
